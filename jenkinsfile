@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('git pull') {
+            steps {
+                git branch: 'main', credentialsId: 'jenkins-github', url: 'https://github.com/Raghav3195/SpringGreetings.git'
+            }
+        }
+        stage('stop process') {
+            steps {
+                sh 'ssh jenkins@172.20.2.9 "sudo systemctl stop greeting.service"'
+            }
+        }
+        stage('copy') {
+            steps {
+                sh 'rsync -avz $WORKSPACE jenkins@172.20.2.9:/tmp/'
+            }
+        }    
+        stage('Build') {
+            steps {
+                sh 'ssh jenkins@172.20.2.9 "/backendscript/deploymvn.sh"'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'curl -sS '
+            }
+        }
+    }
+}
+
+
+#!/bin/bash
+echo "Starting script ..."
+projectDir='app'
+supervisorapp='fundoo.service'
+cp -rvf /tmp/chatapp-pipeline/fundoo /app/
+cp -rvf /tmp/chatapp-pipeline/requirements.txt /app/
+echo "Switching to project directory..."
+cd "/$projectDir"
+echo "Activating Virtual Environment..."
+source venv/bin/activate
+#echo "Pull latest code from branch passed as argument..."
+#git pull origin $1
+#git checkout $1
+echo "Installing Requirements..."
+pip3 install -r requirements.txt
+echo "Running migrate for any database migrations..."
+#python3 /$projectDir/fundoo/manage.py makemigrations
+#python3 /$projectDir/fundoo/manage.py migrate
+echo "Out"
+echo "Restarting app using systemctl ... "
+sudo systemctl daemon-reload
+sudo systemctl restart $supervisorapp
+echo "Script finished"
