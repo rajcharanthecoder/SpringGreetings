@@ -14,18 +14,19 @@ pipeline {
         }
         stage('copy') {
             steps {
-                sh 'rsync -avz $WORKSPACE jenkins@172.20.2.9:/tmp/'
+                sh 'cd $WORKSPACE && mvn clean package'
+                sh 'rsync -avz "$WORKSPACE/target/" jenkins@172.20.2.9:/greeting/target/'
             }
         }    
         stage('Build') {
             steps {
-                sh 'ssh jenkins@172.20.2.9 "/backendscript/deploymvn.sh"'
+                sh 'ssh jenkins@172.20.2.9 "sudo systemctl daemon-reload && sudo systemctl restart greeting.service"'
             }
         }
         
         stage('Test') {
             steps {
-                sh 'curl -sS http://100.25.36.7'
+                sh 'curl http://18.204.14.173'
             }
         }
     }
