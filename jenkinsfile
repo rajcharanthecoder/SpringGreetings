@@ -30,28 +30,3 @@ pipeline {
         }
     }
 }
-
-
-#!/bin/bash
-echo "Starting script ..."
-projectDir='app'
-supervisorapp='fundoo.service'
-cp -rvf /tmp/chatapp-pipeline/fundoo /app/
-cp -rvf /tmp/chatapp-pipeline/requirements.txt /app/
-echo "Switching to project directory..."
-cd "/$projectDir"
-echo "Activating Virtual Environment..."
-source venv/bin/activate
-#echo "Pull latest code from branch passed as argument..."
-#git pull origin $1
-#git checkout $1
-echo "Installing Requirements..."
-pip3 install -r requirements.txt
-echo "Running migrate for any database migrations..."
-#python3 /$projectDir/fundoo/manage.py makemigrations
-#python3 /$projectDir/fundoo/manage.py migrate
-echo "Out"
-echo "Restarting app using systemctl ... "
-sudo systemctl daemon-reload
-sudo systemctl restart $supervisorapp
-echo "Script finished"
