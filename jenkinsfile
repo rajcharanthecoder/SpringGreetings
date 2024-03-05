@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        // Define the tool outside the stages
+        maven 'Default Maven'
+    }
+
     stages {
         stage('git pull') {
             steps {
@@ -8,9 +13,12 @@ pipeline {
             }
         }
         stage('SonarQube Analysis'){
-            def mvn = tool 'Maven_HOME';
-            withSonarQubeEnv(installationName: 'scanner') {
-                sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=greeting -Dsonar.projectName='greeting'"
+            steps {
+                script {
+                    withSonarQubeEnv('YourSonarQubeEnvironment') {
+                        sh "mvn clean verify sonar:sonar -Dsonar.projectKey=greeting -Dsonar.projectName='greeting'"
+                    }
+                }
             }
         }
         stage('stop process') {
