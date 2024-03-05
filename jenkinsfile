@@ -34,7 +34,6 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'ssh jenkins@172.20.2.9 "sudo systemctl daemon-reload && sudo systemctl restart greeting.service"'
-                sh 'sleep 30'
             }
         }
         stage('Test') {
