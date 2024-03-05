@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     tools {
-        // Define the tool outside the stages
-        maven 'Default Maven'
+        maven 'MAVEN_HOME'
     }
 
     stages {
