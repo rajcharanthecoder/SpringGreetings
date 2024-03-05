@@ -14,7 +14,7 @@ pipeline {
         stage('SonarQube Analysis'){
             steps {
                 script {
-                    withSonarQubeEnv('YourSonarQubeEnvironment') {
+                    withSonarQubeEnv('scanner') {
                         sh "mvn clean verify sonar:sonar -Dsonar.projectKey=greeting -Dsonar.projectName='greeting'"
                     }
                 }
