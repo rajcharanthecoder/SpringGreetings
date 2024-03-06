@@ -20,6 +20,13 @@ pipeline {
                 }
             }
         }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('stop process') {
             steps {
                 sh 'ssh jenkins@172.20.2.9 "sudo systemctl stop greeting.service"'
