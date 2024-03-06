@@ -32,13 +32,17 @@ pipeline {
                 sh 'ssh jenkins@172.20.2.9 "sudo systemctl stop greeting.service"'
             }
         }
-        stage('copy') {
+        stage('Build') {
             steps {
                 sh 'cd $WORKSPACE && mvn clean package'
+            }
+        }
+        stage('copy') {
+            steps {
                 sh 'rsync -avz "$WORKSPACE/target/" jenkins@172.20.2.9:/greeting/target/'
             }
-        }    
-        stage('Build') {
+        }     
+        stage('Deployment') {
             steps {
                 sh 'ssh jenkins@172.20.2.9 "sudo systemctl daemon-reload && sudo systemctl restart greeting.service"'
                 sh 'sleep 30'
